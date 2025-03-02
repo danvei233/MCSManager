@@ -3,30 +3,35 @@ import { router, type RouterMetaInfo } from "@/config/router";
 import logo from "@/assets/logo.png";
 import { useLayoutContainerStore } from "@/stores/useLayoutContainerStore";
 import { useRoute } from "vue-router";
+import "tdesign-vue-next/es/style/index.css";
+import { Notification, MessagePlugin } from "tdesign-vue-next";
 import { computed, h } from "vue";
 import { useAppRouters } from "@/hooks/useAppRouters";
-import { notification } from "ant-design-vue";
+// 替换ant-design的notification为tdesign的Notification
 import {
-  BuildOutlined,
-  SaveOutlined,
-  AppstoreAddOutlined,
-  LogoutOutlined,
-  UserOutlined,
-  MenuUnfoldOutlined,
-  FormatPainterOutlined,
-  RedoOutlined,
-  CloseCircleOutlined
-} from "@ant-design/icons-vue";
+  LogoutIcon,
+  AppleIcon,
+  SaveIcon,
+  CloseCircleIcon,
+  CloseOctagonIcon,
+  RefreshIcon,
+  FillColor1Icon,
+  MenuUnfoldIcon,
+  Filter2Icon,
+  User1Icon
+} from 'tdesign-icons-vue-next';
+
 import { useScreen } from "@/hooks/useScreen";
 import CardPanel from "./CardPanel.vue";
 import { $t, $t as t } from "@/lang/i18n";
 import { THEME, useAppConfigStore } from "@/stores/useAppConfigStore";
 import { logoutUser } from "@/services/apis/index";
-import { message } from "ant-design-vue";
+// 替换message为TDesign的Message
 import { useAppToolsStore } from "@/stores/useAppToolsStore";
 import { useAppStateStore } from "@/stores/useAppStateStore";
 import { useLayoutConfigStore } from "../stores/useLayoutConfig";
-import { Modal } from "ant-design-vue";
+// 替换Modal为TDesign的DialogPlugin
+import { DialogPlugin } from "tdesign-vue-next";
 
 const { saveGlobalLayoutConfig, resetGlobalLayoutConfig } = useLayoutConfigStore();
 const { containerState, changeDesignMode } = useLayoutContainerStore();
@@ -116,25 +121,25 @@ const appMenus = computed(() => {
   return [
     {
       title: t("TXT_CODE_8b0f8aab"),
-      icon: AppstoreAddOutlined,
+      icon: LogoutIcon,
       click: openNewCardDialog,
       conditions: containerState.isDesignMode,
       onlyPC: true
     },
     {
       title: t("TXT_CODE_8145d82"),
-      icon: SaveOutlined,
+      icon: SaveIcon,
       click: async () => {
-        Modal.confirm({
-          title: $t("TXT_CODE_d73c8510"),
-          content: $t("TXT_CODE_6d9b9f22"),
-          async onOk() {
+        DialogPlugin.confirm({
+          header: $t("TXT_CODE_d73c8510"),
+          body: $t("TXT_CODE_6d9b9f22"),
+          onConfirm: async () => {
             changeDesignMode(false);
             await saveGlobalLayoutConfig();
-            notification.success({
+            Notification.success({
               placement: "top",
-              message: t("TXT_CODE_47c35915"),
-              description: t("TXT_CODE_e10c992a")
+              title: t("TXT_CODE_47c35915"),
+              content: t("TXT_CODE_e10c992a")
             });
             setTimeout(() => window.location.reload(), 400);
           }
@@ -145,12 +150,12 @@ const appMenus = computed(() => {
     },
     {
       title: t("TXT_CODE_5b5d6f04"),
-      icon: CloseCircleOutlined,
+      icon: CloseOctagonIcon,
       click: async () => {
-        Modal.confirm({
-          title: $t("TXT_CODE_8f20c21c"),
-          content: $t("TXT_CODE_9740f199"),
-          async onOk() {
+        DialogPlugin.confirm({
+          header: $t("TXT_CODE_8f20c21c"),
+          body: $t("TXT_CODE_9740f199"),
+          onConfirm: async () => {
             window.location.reload();
           }
         });
@@ -160,17 +165,17 @@ const appMenus = computed(() => {
     },
     {
       title: t("TXT_CODE_abd2f7e1"),
-      icon: RedoOutlined,
+      icon: RefreshIcon,
       click: async () => {
-        Modal.confirm({
-          title: $t("TXT_CODE_74fa2f73"),
-          content: $t("TXT_CODE_f63bfe78"),
-          async onOk() {
+        DialogPlugin.confirm({
+          header: $t("TXT_CODE_74fa2f73"),
+          body: $t("TXT_CODE_f63bfe78"),
+          onConfirm: async () => {
             await resetGlobalLayoutConfig();
-            notification.success({
+            Notification.success({
               placement: "top",
-              message: t("TXT_CODE_15c6d4eb"),
-              description: t("TXT_CODE_e10c992a")
+              title: t("TXT_CODE_15c6d4eb"),
+              content: t("TXT_CODE_e10c992a")
             });
             setTimeout(() => window.location.reload(), 400);
           }
@@ -182,13 +187,13 @@ const appMenus = computed(() => {
 
     {
       title: t("TXT_CODE_f591e2fa"),
-      icon: FormatPainterOutlined,
+      icon: FillColor1Icon,
       click: (key: string) => {
         if (key === THEME.DARK) {
-          Modal.confirm({
-            title: $t("TXT_CODE_9775ccb"),
-            content: $t("TXT_CODE_90b2ae00"),
-            async onOk() {
+          DialogPlugin.confirm({
+            header: $t("TXT_CODE_9775ccb"),
+            body: $t("TXT_CODE_90b2ae00"),
+            onConfirm: async () => {
               setTheme(THEME.DARK);
             }
           });
@@ -211,14 +216,13 @@ const appMenus = computed(() => {
     },
     {
       title: t("TXT_CODE_ebd2a6a1"),
-      icon: BuildOutlined,
+      icon: Filter2Icon,
       click: () => {
         changeDesignMode(true);
-        notification.warning({
+        Notification.warning({
           placement: "bottom",
-          type: "warning",
-          message: t("TXT_CODE_7b1adf35"),
-          description: t("TXT_CODE_6b6f1d3")
+          title: t("TXT_CODE_7b1adf35"),
+          content: t("TXT_CODE_6b6f1d3")
         });
       },
       conditions: !containerState.isDesignMode && isAdmin.value,
@@ -226,7 +230,7 @@ const appMenus = computed(() => {
     },
     {
       title: t("TXT_CODE_8c3164c9"),
-      icon: UserOutlined,
+      icon: User1Icon,
       click: () => {
         appTools.showUserInfoDialog = true;
       },
@@ -235,14 +239,21 @@ const appMenus = computed(() => {
     },
     {
       title: t("TXT_CODE_2c69ab15"),
-      icon: LogoutOutlined,
+      icon: LogoutIcon,
       click: async () => {
-        Modal.confirm({
-          title: $t("TXT_CODE_9654b91c"),
-          async onOk() {
-            await execute();
-            message.success(t("TXT_CODE_11673d8c"));
-            setTimeout(() => (window.location.href = "/"), 400);
+        DialogPlugin.confirm({
+          header: $t("TXT_CODE_9654b91c"),
+          onConfirm: async () => {
+            try {
+              await execute();
+              MessagePlugin.success(t("TXT_CODE_11673d8c"));
+              setTimeout(() => {
+                window.location.reload();
+              }, 400);
+            } catch (error) {
+              console.error("退出失败:", error);
+              MessagePlugin.error(t("TXT_CODE_11673d8c") + "失败");
+            }
           }
         });
       },
@@ -263,44 +274,39 @@ const openPhoneMenu = (b = false) => {
   <header class="app-header-wrapper">
     <div v-if="!isPhone" class="app-header-content">
       <nav class="btns">
-        <a href="." style="margin-right: 12px">
-          <div class="logo">
-            <img :src="logo" style="height: 18px" />
-          </div>
-        </a>
-
-        <div
-          v-for="item in menus"
-          :key="item.path"
-          class="nav-button"
-          @click="handleToPage(item.path)"
-        >
-          <span>{{ item.name }}</span>
-        </div>
+      <a href="." style="margin-right: 12px">
+      <div class="logo">
+        <img :src="logo" style="height: 18px" />
+      </div>
+    </a>
       </nav>
       <div class="btns">
-        <div v-for="(item, index) in appMenus" :key="index">
-          <a-dropdown v-if="item.menus && item.conditions" placement="bottom">
-            <div class="nav-button" @click.prevent>
-              <component :is="item.icon"></component>
-            </div>
-            <template #overlay>
-              <a-menu @click="(e: any) => item.click(String(e.key))">
-                <a-menu-item v-for="m in item.menus" :key="m.value">
-                  {{ m.title }}
-                </a-menu-item>
-              </a-menu>
-            </template>
-          </a-dropdown>
-          <a-tooltip v-else-if="item.conditions" placement="bottom">
-            <template #title>
-              <span>{{ item.title }}</span>
-            </template>
-            <div class="nav-button" type="text" @click="(e: any) => item.click(e.key)">
-              <component :is="item.icon"></component>
-            </div>
-          </a-tooltip>
+        <div v-for="item in menus" :key="item.path" class="nav-button" @click="handleToPage(item.path)">
+          <span>{{ item.name }}</span>
         </div>
+        <div v-for="(item, index) in appMenus" :key="index">
+            <t-dropdown v-if="item.menus && item.conditions" placement="bottom">
+              <div class="nav-button" style="font-size: large;">
+                <component :is="item.icon"></component>
+              </div>
+              <template #dropdown>
+                <t-dropdown-menu>
+                  <t-dropdown-item 
+                    v-for="m in item.menus" 
+                    :key="m.value"
+                    @click="() => item.click(m.value)"
+                  >
+                    {{ m.title }}
+                  </t-dropdown-item>
+                </t-dropdown-menu>
+              </template>
+            </t-dropdown>
+            <t-tooltip v-else-if="item.conditions" placement="bottom" :content="item.title">
+              <div class="nav-button" style="font-size: large;" @click="() => item.click('')">
+                <component :is="item.icon"></component>
+              </div>
+            </t-tooltip>
+          </div>
       </div>
     </div>
   </header>
@@ -312,27 +318,23 @@ const openPhoneMenu = (b = false) => {
       <template #body>
         <div style="display: flex; justify-content: space-between; align-items: center">
           <div style="width: 100px" class="flex">
-            <a-button
-              type="text"
-              :icon="h(MenuUnfoldOutlined)"
-              size="small"
-              @click="openPhoneMenu(true)"
-            ></a-button>
+            <t-button variant="text" :icon="MenuUnfoldIcon" size="small" @click="openPhoneMenu(true)"></t-button>
             <div v-for="(item, index) in appMenus" :key="index">
-              <a-dropdown
-                v-if="item.menus && item.conditions && !item.onlyPC"
-                class="phone-nav-button"
-                placement="bottom"
-              >
-                <a-button type="text" :icon="h(item.icon)" size="small" @click.prevent></a-button>
-                <template #overlay>
-                  <a-menu @click="(e: any) => item.click(String(e.key))">
-                    <a-menu-item v-for="m in item.menus" :key="m.value">
+              <t-dropdown v-if="item.menus && item.conditions && !item.onlyPC" class="phone-nav-button"
+                placement="bottom">
+                <t-button variant="text" :icon="h(item.icon)" size="small"></t-button>
+                <template #dropdown>
+                  <t-dropdown-menu>
+                    <t-dropdown-item 
+                      v-for="m in item.menus" 
+                      :key="m.value"
+                      @click="() => item.click(m.value)"
+                    >
                       {{ m.title }}
-                    </a-menu-item>
-                  </a-menu>
+                    </t-dropdown-item>
+                  </t-dropdown-menu>
                 </template>
-              </a-dropdown>
+              </t-dropdown>
             </div>
           </div>
           <div>
@@ -340,14 +342,8 @@ const openPhoneMenu = (b = false) => {
           </div>
           <div style="width: 100px" class="justify-end">
             <div v-for="(item, index) in appMenus" :key="index">
-              <a-button
-                v-if="item.conditions && !item.onlyPC && !item.menus"
-                class="phone-nav-button"
-                type="text"
-                :icon="h(item.icon)"
-                size="small"
-                @click="item.click"
-              ></a-button>
+              <t-button v-if="item.conditions && !item.onlyPC && !item.menus" class="phone-nav-button" variant="text"
+                :icon="item.icon" size="small" @click="item.click"></t-button>
             </div>
           </div>
         </div>
@@ -355,32 +351,22 @@ const openPhoneMenu = (b = false) => {
     </CardPanel>
   </header>
 
-  <a-drawer
-    :width="500"
-    title="MENU"
-    placement="top"
-    :open="containerState.showPhoneMenu"
-    @close="() => (containerState.showPhoneMenu = false)"
-  >
+  <t-drawer :size="500" header="MENU" placement="top" :visible="containerState.showPhoneMenu"
+    @close="() => (containerState.showPhoneMenu = false)">
     <div class="phone-menu">
-      <div
-        v-for="item in menus"
-        :key="item.path"
-        class="phone-menu-btn"
-        @click="handleToPage(item.path)"
-      >
+      <div v-for="item in menus" :key="item.path" class="phone-menu-btn" @click="handleToPage(item.path)">
         {{ item.name }}
       </div>
     </div>
-  </a-drawer>
+  </t-drawer>
 
   <div class="breadcrumbs">
-    <a-breadcrumb>
-      <a-breadcrumb-item v-for="item in breadcrumbs" :key="item.title">
+    <t-breadcrumb>
+      <t-breadcrumb-item v-for="item in breadcrumbs" :key="item.title">
         <a v-if="!item.disabled" :href="item.href">{{ item.title }}</a>
         <span v-else>{{ item.title }}</span>
-      </a-breadcrumb-item>
-    </a-breadcrumb>
+      </t-breadcrumb-item>
+    </t-breadcrumb>
   </div>
 </template>
 
@@ -443,9 +429,10 @@ const openPhoneMenu = (b = false) => {
   right: 0;
 
   z-index: 20;
+
   .app-header-content {
     @extend .global-app-container;
-
+    color: #202020;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -453,26 +440,34 @@ const openPhoneMenu = (b = false) => {
     height: 60px;
 
     .btns {
+      height: 50%;
       display: flex;
       align-items: center;
     }
   }
 
+  .btns div {
+    height: 100%;
+  }
+
   .nav-button {
-    margin: 0 4px;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    text-align: center !important;
     font-size: 14px;
     transition: all 0.4s;
-    color: var(--app-header-text-color) !important;
+    color: #ffffff8c;
     text-align: center;
     padding: 8px 12px;
     min-width: 40px;
     cursor: pointer;
-    border-radius: 6px;
   }
 
   .icon-button {
     font-size: 16px !important;
   }
+
   .nav-button:hover {
     background-color: rgba(215, 215, 215, 0.12);
   }

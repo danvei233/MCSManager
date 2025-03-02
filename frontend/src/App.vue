@@ -26,6 +26,7 @@ function setBackground(url: string) {
   hasBgImage.value = true;
 }
 
+
 if (isDarkTheme()) {
   document.body.classList.add("app-dark-theme");
 } else {
@@ -42,6 +43,7 @@ onMounted(async () => {
     setBackground(frontendSettings.theme.backgroundImage);
   closeAppLoading();
 });
+
 </script>
 
 <template>
@@ -49,6 +51,7 @@ onMounted(async () => {
     <!-- App Container -->
     <div class="global-app-container">
       <AppHeader />
+      
       <RouterView :key="$route.fullPath" />
     </div>
 

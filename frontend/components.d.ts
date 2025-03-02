@@ -93,6 +93,7 @@ declare module 'vue' {
     NodeSimpleChart: typeof import('./src/components/NodeSimpleChart.vue')['default']
     NoPreviewCard: typeof import('./src/components/NoPreviewCard.vue')['default']
     Params: typeof import('./src/components/NewCardList/params.vue')['default']
+    PermissionErrorHandler: typeof import('./src/components/PermissionErrorHandler.vue')['default']
     PlaceHolderCard: typeof import('./src/components/PlaceHolderCard.vue')['default']
     PurchaseQueryDialog: typeof import('./src/components/fc/PurchaseQueryDialog.vue')['default']
     ResponsiveLayoutGroup: typeof import('./src/components/ResponsiveLayoutGroup.vue')['default']

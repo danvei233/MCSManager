@@ -5,7 +5,6 @@ import { useOverviewInfo } from "@/hooks/useOverviewInfo";
 import type { LayoutCard } from "@/types";
 import { computed } from "vue";
 import { arrayFilter } from "@/tools/array";
-
 defineProps<{
   card: LayoutCard;
 }>();
@@ -89,6 +88,7 @@ const overviewList = computed(() => {
 </script>
 
 <template>
+  
   <div style="height: 100%">
     <CardPanel style="height: 100%">
       <template #title>{{ card.title }}</template>

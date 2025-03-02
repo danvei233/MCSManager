@@ -42,7 +42,7 @@ const showCardOperator = (card: ILayoutCard) => {
 <template>
   <main class="main-layout-container">
     <NewCardList v-if="containerState.isDesignMode" ref="newCardList" />
-
+ 
     <a-row
       v-if="currentLayoutConfig.length > 1"
       :class="{ 'row-order-mode': containerState.isDesignMode }"
@@ -74,7 +74,7 @@ const showCardOperator = (card: ILayoutCard) => {
           @dragenter="(e: DragEvent) => dragenter(e, card.id)"
           @drop="(e: DragEvent) => drop(e, card.id)"
         />
-
+        
         <PlaceHolderCard
           v-else-if="card.type == PLACE_HOLDER_CARD"
           :id="'layout-card-container-' + card.id"

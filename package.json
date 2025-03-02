@@ -10,7 +10,12 @@
     "scan-useless-key": "node scripts/useless-key-scanner.mjs ./languages en_US.json . \".js,.ts,.vue,.tsx,.jsx\" \"node_modules/\""
   },
   "dependencies": {
+    "common": "^0.2.5",
     "crc": "^4.3.2",
     "i18next-scanner": "^4.4.0"
+  },
+  "devDependencies": {
+    "unplugin-auto-import": "^19.1.1",
+    "unplugin-vue-components": "^28.4.1"
   }
 }

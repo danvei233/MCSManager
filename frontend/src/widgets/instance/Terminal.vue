@@ -222,6 +222,59 @@ onMounted(async () => {
 </script>
 
 <template>
+
+  <!-- i18nWCSNDMM -->
+  <t-head-menu theme="light">
+    <a href="../"><svg 
+        class="ruyi-icon ruyi-icon-arrow-left-stroke" role="img" aria-label="btnback" xmlns="http://www.w3.org/2000/svg"
+        width="16" height="16" viewBox="0 0 16 16">
+        <g fill="none">
+          <path
+            d="M4.27738 8.66672L7.47264 11.862L6.52984 12.8048L1.7251 8.00005L6.52984 3.19531L7.47264 4.13812L4.27738 7.33338H14.6679V8.66672H4.27738Z"
+            fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" fill-opacity="0.9"></path>
+        </g>
+      </svg></a>
+      <h2>NAME</h2>
+
+  </t-head-menu>
+
+
+  <t-space direction="vertical" style="width: 100%;">
+    <!-- 方式一： t-tab-panel 方式 -->
+    <t-tabs>
+      <!-- 默认插槽 和 具名插槽（panel）都是用来渲染面板内容 -->
+      <t-tab-panel value="gy" label="概要" :destroyOnHide="false">
+        <p style="padding: 25px">选项卡1的内容，使用 t-tab-panel 渲染</p>
+      </t-tab-panel>
+      <t-tab-panel value="info" label="应用详情" :destroyOnHide="false">
+        <p style="padding: 25px">选项卡1的内容，使用 t-tab-panel 渲染</p>
+      </t-tab-panel>
+      <t-tab-panel value="terminal" label="终端" :destroyOnHide="false">
+        <TerminalCore v-if="instanceId && daemonId" :instance-id="instanceId" :daemon-id="daemonId"
+          :height="card.height" />
+      </t-tab-panel>
+      <t-tab-panel value="game" label="游戏配置" :destroyOnHide="false">
+        <p style="padding: 25px">选项卡1的内容，使用 t-tab-panel 渲染</p>
+      </t-tab-panel>
+
+      <t-tab-panel value="file" label="文件管理" :destroyOnHide="false">
+        <p slot="panel" style="padding: 25px">选项卡2的内容，使用 t-tab-panel 渲染</p>
+      </t-tab-panel>
+      <t-tab-panel value="setting" label="设置" :destroyOnHide="false" />
+    </t-tabs>
+
+
+
+  </t-space>
+
+
+
+
+
+
+
+
+
   <!-- Terminal Page View -->
   <div v-if="innerTerminalType">
     <div class="mb-24">
@@ -250,10 +303,7 @@ onMounted(async () => {
 
               <a-tag color="purple"> {{ instanceTypeText }} </a-tag>
 
-              <span
-                v-if="instanceInfo?.watcher && instanceInfo?.watcher > 1 && !isPhone"
-                class="ml-16"
-              >
+              <span v-if="instanceInfo?.watcher && instanceInfo?.watcher > 1 && !isPhone" class="ml-16">
                 <a-tooltip>
                   <template #title>
                     {{ $t("TXT_CODE_4a37ec9c") }}
@@ -270,21 +320,11 @@ onMounted(async () => {
         <template #right>
           <div v-if="!isPhone">
             <template v-for="item in [...quickOperations, ...instanceOperations]" :key="item.title">
-              <a-button
-                v-if="item.noConfirm"
-                class="ml-8"
-                :danger="item.type === 'danger'"
-                @click="item.click"
-              >
+              <a-button v-if="item.noConfirm" class="ml-8" :danger="item.type === 'danger'" @click="item.click">
                 <component :is="item.icon" />
                 {{ item.title }}
               </a-button>
-              <a-popconfirm
-                v-else
-                :key="item.title"
-                :title="t('TXT_CODE_276756b2')"
-                @confirm="item.click"
-              >
+              <a-popconfirm v-else :key="item.title" :title="t('TXT_CODE_276756b2')" @confirm="item.click">
                 <a-button class="ml-8" :danger="item.type === 'danger'">
                   <component :is="item.icon" />
                   {{ item.title }}
@@ -296,11 +336,8 @@ onMounted(async () => {
           <a-dropdown v-else>
             <template #overlay>
               <a-menu>
-                <a-menu-item
-                  v-for="item in [...quickOperations, ...instanceOperations]"
-                  :key="item.title"
-                  @click="item.click"
-                >
+                <a-menu-item v-for="item in [...quickOperations, ...instanceOperations]" :key="item.title"
+                  @click="item.click">
                   <component :is="item.icon" />
                   {{ item.title }}
                 </a-menu-item>
@@ -314,12 +351,7 @@ onMounted(async () => {
         </template>
       </BetweenMenus>
     </div>
-    <TerminalCore
-      v-if="instanceId && daemonId"
-      :instance-id="instanceId"
-      :daemon-id="daemonId"
-      :height="card.height"
-    />
+
   </div>
 
   <!-- Other Page View -->
@@ -344,13 +376,7 @@ onMounted(async () => {
       </span>
     </template>
     <template #operator>
-      <span
-        v-for="item in quickOperations"
-        :key="item.title"
-        size="default"
-        class="mr-2"
-        v-bind="item.props"
-      >
+      <span v-for="item in quickOperations" :key="item.title" size="default" class="mr-2" v-bind="item.props">
         <IconBtn :icon="item.icon" :title="item.title" @click="item.click"></IconBtn>
       </span>
       <a-dropdown>
@@ -368,16 +394,15 @@ onMounted(async () => {
       </a-dropdown>
     </template>
     <template #body>
-      <TerminalCore
-        v-if="instanceId && daemonId"
-        :instance-id="instanceId"
-        :daemon-id="daemonId"
-        :height="card.height"
-      />
+      <TerminalCore v-if="instanceId && daemonId" :instance-id="instanceId" :daemon-id="daemonId"
+        :height="card.height" />
     </template>
   </CardPanel>
 
   <Reinstall ref="reinstallDialog" :daemon-id="daemonId ?? ''" :instance-id="instanceId ?? ''" />
+
+
+
 </template>
 
 <style lang="scss" scoped>
@@ -410,6 +435,7 @@ onMounted(async () => {
     }
   }
 }
+
 .console-wrapper {
   position: relative;
 
@@ -432,6 +458,7 @@ onMounted(async () => {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+
     .terminal-container {
       // min-width: 1200px;
       height: 100%;
@@ -454,6 +481,7 @@ onMounted(async () => {
 
       li {
         list-style: none;
+
         span {
           padding: 3px 20px;
           max-width: 300px;
