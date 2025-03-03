@@ -16,13 +16,13 @@ const { containerState } = useLayoutContainerStore();
 </script>
 
 <template>
-  <div
+  <t-card
     :class="{
       'card-panel': true,
       'global-card-container-shadow': true,
       'h-100': props.fullHeight,
       padding: props.padding
-    }"
+    }" class="tb"
   >
     <div v-if="$slots.title" class="card-panel-title">
       <div>
@@ -41,43 +41,23 @@ const { containerState } = useLayoutContainerStore();
       <slot name="body"></slot>
       <slot v-if="containerState.isDesignMode" name="body-design"></slot>
     </div>
-  </div>
+  </t-card>
 </template>
 
 <style lang="scss" scoped>
 @import "@/assets/global.scss";
 
-.padding {
-  padding: 16px;
+.tb{
+    background-color: #fff;
+    border: 0px solid #fff;
+    box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.05) !important;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+    border-radius : 0px !important;
+    color: rgba(0,0,0,0.9);
+    transition: box-shadow .3 sease-in 0s;
+   
 }
-
-.card-panel {
-  border: 1px solid var(--card-border-color);
-  background-color: var(--background-color-white);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-
-  .card-panel-title {
-    font-weight: 600;
-    color: var(--text-color);
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: -4px; // For Ant-Design Font
-    margin-bottom: 8px;
-  }
-  .card-panel-content {
-    flex-grow: 1;
-    color: var(--text-color);
-    position: relative;
-  }
-}
-
-.card-panel-content {
-  overflow: hidden;
-  zoom: 1;
-  word-break: break-all;
-}
+.tb .t-card{padding: 0px !important;}
 </style>

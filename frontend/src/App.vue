@@ -37,7 +37,7 @@ if (isDarkTheme()) {
   element.props.size.default = "large";
 });
 
-onMounted(async () => {
+onMounted(async () => {   
   const frontendSettings = await getSettingsConfig();
   if (frontendSettings?.theme?.backgroundImage)
     setBackground(frontendSettings.theme.backgroundImage);

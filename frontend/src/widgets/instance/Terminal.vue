@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
 import CardPanel from "@/components/CardPanel.vue";
+import InstanceServerConfigOverview from "@/widgets/instance/ServerConfigOverview.vue";
 import { t } from "@/lang/i18n";
+import InstanceBaseInfo from "@/widgets/instance/BaseInfo.vue";
+import InstanceFileManager from "@/widgets/instance/FileManager.vue";
+
 import type { LayoutCard } from "@/types";
 import {
   CloudDownloadOutlined,
@@ -55,7 +59,6 @@ const {
   isGlobalTerminal
 } = useTerminal();
 const reinstallDialog = ref<InstanceType<typeof Reinstall>>();
-
 const instanceId = getMetaOrRouteValue("instanceId");
 const daemonId = getMetaOrRouteValue("daemonId");
 const viewType = getMetaOrRouteValue("viewType", false);
@@ -219,61 +222,272 @@ onMounted(async () => {
     throw error;
   }
 });
+const options = [
+  { content: '重装系统', value: 1 },
+  { content: '退还系统', value: 2 },
+  { content: '编辑标签', value: 3 },
+  { content: '升级套餐', value: 4 },
+];
+const clickHandler = (value: number) => {
+  console.log('clickHandler', value);
+};
+
+// ===============================================================================
+
+
+
 </script>
 
 <template>
 
   <!-- i18nWCSNDMM -->
-  <t-head-menu theme="light">
-    <a href="../"><svg 
-        class="ruyi-icon ruyi-icon-arrow-left-stroke" role="img" aria-label="btnback" xmlns="http://www.w3.org/2000/svg"
-        width="16" height="16" viewBox="0 0 16 16">
-        <g fill="none">
-          <path
-            d="M4.27738 8.66672L7.47264 11.862L6.52984 12.8048L1.7251 8.00005L6.52984 3.19531L7.47264 4.13812L4.27738 7.33338H14.6679V8.66672H4.27738Z"
-            fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" fill-opacity="0.9"></path>
-        </g>
-      </svg></a>
-      <h2>NAME</h2>
+  <t-head-menu theme="light" style="padding: 0 10px; gap: 10px;">
+    <t-space>
+      <a style="margin-right: 10px;" href="../"><svg class="ruyi-icon ruyi-icon-arrow-left-stroke" role="img"
+          aria-label="btnback" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+          <g fill="none">
+            <path
+              d="M4.27738 8.66672L7.47264 11.862L6.52984 12.8048L1.7251 8.00005L6.52984 3.19531L7.47264 4.13812L4.27738 7.33338H14.6679V8.66672H4.27738Z"
+              fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" fill-opacity="0.9"></path>
+          </g>
+        </svg>
+      </a>
+      <h2> {{ getInstanceName || '加载中...' }}</h2>
+      <div style="background-color: #e9ecf1;">
+        <span style="margin: 10px;">北京</span>
+      </div>
+<!-- show ip -->
+ <div style="height: 50%;">
+    <a-descriptions bordered size="small" >
+        <a-descriptions-item size="small" label="ip">ip地址</a-descriptions-item>
+     </a-descriptions>
+  </div>
+    </t-space>
+    <div style="margin-left: auto;">
+      <t-space>
+        <t-button>
+          <span>登录</span>
+        </t-button>
+        <t-button theme="default" variant="outline">
+          <span>关机</span>
+        </t-button>
+        <t-button theme="default" variant="outline">
+          <span>重启</span>
+        </t-button>
+        <t-button theme="default" variant="outline">
+          <span>重置密码</span>
+        </t-button>
+        <t-button theme="default" variant="outline">
+          <span>续费</span>
+        </t-button>
+        <t-dropdown :options="options" trigger="click" @click="clickHandler" :min-column-width="100">
+          <t-button variant="outline">
+            更多操作
+            <template #suffix> <t-icon name="chevron-down" size="16" /></template>
+          </t-button>
+        </t-dropdown>
+      </t-space>
 
+    </div>
+    <t-space>
+      <t-space>
+
+      </t-space>
+    </t-space>
   </t-head-menu>
 
+  <t-tabs>
+    <!-- Summary Panel -->
+    <t-tab-panel value="gy" label="概要" :destroyOnHide="false">
+      <div style="padding: 12px; display: flex; justify-content: space-between;">
+        <div style="width: 100%;">
+          <InstanceBaseInfo :instance-info="instanceInfo" :card="card" />
+        </div>
+      </div>
+    </t-tab-panel>
 
-  <t-space direction="vertical" style="width: 100%;">
-    <!-- 方式一： t-tab-panel 方式 -->
-    <t-tabs>
-      <!-- 默认插槽 和 具名插槽（panel）都是用来渲染面板内容 -->
-      <t-tab-panel value="gy" label="概要" :destroyOnHide="false">
-        <p style="padding: 25px">选项卡1的内容，使用 t-tab-panel 渲染</p>
-      </t-tab-panel>
-      <t-tab-panel value="info" label="应用详情" :destroyOnHide="false">
-        <p style="padding: 25px">选项卡1的内容，使用 t-tab-panel 渲染</p>
-      </t-tab-panel>
-      <t-tab-panel value="terminal" label="终端" :destroyOnHide="false">
-        <TerminalCore v-if="instanceId && daemonId" :instance-id="instanceId" :daemon-id="daemonId"
-          :height="card.height" />
-      </t-tab-panel>
-      <t-tab-panel value="game" label="游戏配置" :destroyOnHide="false">
-        <p style="padding: 25px">选项卡1的内容，使用 t-tab-panel 渲染</p>
-      </t-tab-panel>
+    <!-- Instance Details Panel -->
+    <t-tab-panel value="info" label="应用详情" :destroyOnHide="false">
+     
+      <div class="server-management-app">
+    <!-- Header notification -->
+    <t-alert
+      theme="info"
+      message="某三方应用正在尝试访问并只开并使用"
+      icon
+      class="t-margin-bottom-16"
+    />
 
-      <t-tab-panel value="file" label="文件管理" :destroyOnHide="false">
-        <p slot="panel" style="padding: 25px">选项卡2的内容，使用 t-tab-panel 渲染</p>
-      </t-tab-panel>
-      <t-tab-panel value="setting" label="设置" :destroyOnHide="false" />
-    </t-tabs>
+    <!-- Main content -->
+    <t-row :gutter="[16, 16]">
+      <!-- Left panel -->
+      <t-col :xs="24" :lg="18">
+        <t-card title="应用管理与操作" bordered>
+          <template #title>
+            <t-space>
+              <span>应用管理与操作</span>
+              <t-badge count="1.6中文版" theme="primary" shape="round" />
+            </t-space>
+          </template>
+          
+          <template #actions>
+            <t-space align="center">
+              <t-avatar>土</t-avatar>
+              <span>土豆帕帕</span>
+            </t-space>
+          </template>
 
+          <!-- Running status -->
+          <t-space direction="vertical" size="medium" style="width: 100%">
+            <t-space align="center">
+              <span>运行状态:</span>
+              <t-tag theme="primary" variant="light">已启动</t-tag>
+            </t-space>
 
+            <!-- Action buttons -->
+            <t-space>
+              <t-button theme="primary" size="small">启动</t-button>
+              <t-button theme="danger" size="small">停止</t-button>
+              <t-button variant="outline" size="small">重启</t-button>
+            </t-space>
 
-  </t-space>
+            <!-- Operation buttons -->
+            <t-space wrap>
+              <t-button variant="text" size="small">导出存档</t-button>
+              <t-button variant="text" size="small">定时备份存档</t-button>
+              <t-button variant="text" size="small">云备份存档</t-button>
+              <t-dropdown :options="importOptions">
+                <t-button variant="text" size="small">导入存档 <t-icon name="chevron-down" /></t-button>
+              </t-dropdown>
+              <t-button variant="text" size="small">更新游戏</t-button>
+              <t-button variant="text" size="small">设置运行插件</t-button>
+              <t-button variant="text" size="small">设置Swap</t-button>
+            </t-space>
 
+            <!-- Configuration section -->
+            <t-divider />
+            <t-space align="center" justify="space-between" style="width: 100%">
+              <t-typography.Title level="h5">应用配置</t-typography.Title>
+              <t-button theme="primary" variant="text" size="small">
+                <t-icon name="edit" />调整参数
+              </t-button>
+            </t-space>
 
+            <!-- Parameters table -->
+            <t-table
+              :data="configData"
+              :columns="configColumns"
+              size="small"
+              :pagination="{ pageSize: 10 }"
+              stripe
+              bordered
+              style="width: 100%"
+            />
+          </t-space>
+        </t-card>
+      </t-col>
 
+      <!-- Right panel -->
+      <t-col :xs="24" :lg="6">
+        <t-card bordered>
+          <t-space direction="vertical" size="medium" style="width: 100%">
+            <t-space>
+              <t-icon name="help-circle" size="large" style="color: #0052d9" />
+              <t-typography.Title level="h5" style="margin: 0">帕帕小助手</t-typography.Title>
+            </t-space>
+            
+            <t-typography.Paragraph theme="secondary" style="font-size: 12px">
+              由集三方应用插件提供技术支持，请注意遵循相应规范
+            </t-typography.Paragraph>
 
+            <!-- Question input -->
+            <t-card bordered>
+              <t-space direction="vertical" size="small" style="width: 100%">
+                <t-space>
+                  <t-icon name="help" />
+                  <span>您想了解什么问题?</span>
+                </t-space>
+                
+                <t-input placeholder="请输入您的问题，按Enter搜索" />
+                
+                <t-space style="color: #999; font-size: 12px">
+                  <t-icon name="time" />
+                  <span>历史记录:</span>
+                  <span>今日已解决: 0</span>
+                  <span>昨日可解决: 0</span>
+                </t-space>
+              </t-space>
+            </t-card>
 
+            <!-- FAQ section -->
+            <t-space direction="vertical" style="width: 100%">
+              <t-button 
+                v-for="(faq, index) in faqs" 
+                :key="index" 
+                variant="text" 
+                block 
+                align="left"
+              >
+                {{ faq }}
+              </t-button>
+            </t-space>
 
+            <!-- Common tutorials -->
+            <t-divider />
+            <t-typography.Title level="h5">常用教程</t-typography.Title>
+            <t-space direction="vertical" style="width: 100%">
+              <t-button 
+                v-for="(tutorial, index) in tutorials" 
+                :key="index" 
+                variant="text" 
+                block 
+                align="left"
+                suffix="chevron-right"
+              >
+                {{ tutorial }}
+              </t-button>
+            </t-space>
+          </t-space>
+        </t-card>
+      </t-col>
+    </t-row>
+  </div>
+     
+     
+      <div style="padding: 25px">
+        <a-descriptions bordered>
+          <a-descriptions-item label="实例ID">{{ instanceId }}</a-descriptions-item>
+          <a-descriptions-item label="守护进程ID">{{ daemonId }}</a-descriptions-item>
+        </a-descriptions>
+      </div>
+    </t-tab-panel>
 
+    <!-- Terminal Panel -->
+    <t-tab-panel value="terminal" label="终端" :destroyOnHide="false">
+      <TerminalCore v-if="instanceId && daemonId" :instance-id="instanceId" :daemon-id="daemonId"
+        :height="card.height" />
+    </t-tab-panel>
 
+    <!-- Game Config Panel -->
+    <t-tab-panel value="game" label="游戏配置" :destroyOnHide="false">
+      <!-- 游戏配置面板 -->
+      <!-- <InstanceServerConfigOverview :instance-info="instanceInfo" :card="card" /> -->
+    </t-tab-panel>
+
+    <!-- File Management Panel -->
+    <t-tab-panel value="file" label="文件管理" :destroyOnHide="false">
+      <InstanceFileManager :instance-info="instanceInfo" :card="card" />
+    </t-tab-panel>
+
+    <!-- Settings Panel -->
+    <t-tab-panel value="setting" label="设置" :destroyOnHide="false">
+      <div style="padding: 25px">
+        <a-list bordered>
+
+        </a-list>
+      </div>
+    </t-tab-panel>
+  </t-tabs>
 
   <!-- Terminal Page View -->
   <div v-if="innerTerminalType">
@@ -406,6 +620,10 @@ onMounted(async () => {
 </template>
 
 <style lang="scss" scoped>
+.t-tab-panel {
+  background-color: #f2f4f8;
+}
+
 .error-card {
   position: absolute;
   left: 0;

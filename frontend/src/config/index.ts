@@ -64,8 +64,6 @@ export const LAYOUT_CARD_TYPES: { [key: string]: any } = {
   Settings,
   UserList,
   Terminal,
-  InstanceManagerBtns,
-  InstanceBaseInfo,
   InstanceServerConfigOverview,
   InstanceServerConfigFile,
   InstanceFileManager,
@@ -382,17 +380,6 @@ export function getLayoutCardPool() {
           type: "instance"
         }
       ]
-    },
-    {
-      id: getRandomId(),
-      permission: ROLE.ADMIN,
-      type: "RequestChart",
-      title: t("TXT_CODE_a4037a98"),
-      meta: {},
-      width: 6,
-      description: t("TXT_CODE_6f659da2"),
-      height: LayoutCardHeight.SMALL,
-      category: NEW_CARD_TYPE.DATA
     },
     {
       id: getRandomId(),

@@ -4,6 +4,7 @@ import { t } from "@/lang/i18n";
 import CardPanel from "@/components/CardPanel.vue";
 import type { LayoutCard } from "@/types";
 import { getConfigFileList } from "@/services/apis/instance";
+
 import { reportErrorMsg } from "@/tools/validator";
 import { useLayoutCardTools } from "@/hooks/useCardTools";
 import { getInstanceConfigByType, type InstanceConfigs } from "@/hooks/useInstance";
